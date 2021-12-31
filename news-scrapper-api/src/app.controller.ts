@@ -3,15 +3,15 @@ import { AppService } from './app.service';
 
 @Controller('news')
 export class AppController {
-private logger = new Logger()  ;
+  private logger = new Logger();
 
   constructor(private readonly appService: AppService,
   ) { }
 
   @Get(':keyword')
-   async getHello(@Param('keyword') keyword) {
-     this.logger.log(`Keyword ${keyword}`);
-    const data = await  this.appService.getArticlesAsync(keyword);
+  getHello(@Param('keyword') keyword) {
+    this.logger.log(`Keyword ${keyword}`);
+    const data = this.appService.getArticles(keyword);
     this.logger.log(`data in controller ${data}`);
     return data;
   }
