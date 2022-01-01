@@ -9,10 +9,11 @@ export class AppController {
   ) { }
 
   @Get(':keyword')
-  getHello(@Param('keyword') keyword) {
+ async getHello(@Param('keyword') keyword) {
     this.logger.log(`Keyword ${keyword}`);
-    const data = this.appService.getArticles(keyword);
-    this.logger.log(`data in controller ${data}`);
-    return data;
+ return  await this.appService.getArticles(keyword).then(data => {
+      this.logger.log(`data in controller ${JSON.stringify(data)}`);
+      return data;
+    }).catch(err => this.logger.log(`error ${err}`));
   }
 }

@@ -15,20 +15,30 @@ export class AppService {
   },
   {
     source: 'Reuters',
-    url: 'https://www.theguardian.com/uk/technology'
+    url: 'https://www.reuters.com/business/finance/'
   }
   ]
   constructor(private httpService: HttpService) { }
 
-  getArticles(keyword: string) {
-  const  allArticles = this.httpService
-      .get('https://www.theguardian.com/uk/technology')
-      .pipe(map((res) => res.data),
-        map((_html) => this.getDataFromRawHtml(_html, keyword)));
-    return allArticles;
+  getArticles(keyword: string): Promise<IArticles[]> {
+    const newsFetchPromise = new Promise<IArticles[]>((resolve, reject) => {
+      const allArticles: IArticles[] = [];
+      forkJoin(this.newsSource.map(item => this.httpService.get(item.url)))
+        .subscribe(results => {
+
+          results.map(result => {
+            const formatedData = this.getDataFromRawHtml(result.data, keyword);
+            this.logger.log(`formatted data ${JSON.stringify(formatedData)}`);
+            return allArticles.push(...formatedData);
+          });
+          resolve(allArticles);
+        });
+    });
+    return newsFetchPromise;
+
   }
 
-  getDataFromRawHtml(rawHtml: any, keyword: string) {
+  getDataFromRawHtml(rawHtml: any, keyword: string): IArticles[] {
     const articles: Array<IArticles> = []
     const $ = load(rawHtml, { lowerCaseTags: true, lowerCaseAttributeNames: true });
     $('a:contains("' + keyword + '")', rawHtml)
@@ -44,8 +54,4 @@ export class AppService {
     return articles;
 
   }
-
-
-
-
 }
