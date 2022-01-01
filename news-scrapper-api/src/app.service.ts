@@ -9,13 +9,13 @@ import { IArticles, INewsSource } from './app.interface';
 @Injectable()
 export class AppService {
   private logger = new Logger();
-  private newsSource: Array<INewsSource> = [{
+  private newsSources: Array<INewsSource> = [{
     source: 'The Guardian',
     url: 'https://www.theguardian.com/uk/technology'
   },
   {
     source: 'Reuters',
-    url: 'https://www.reuters.com/business/finance/'
+    url: 'https://www.reuters.com/technology'
   }
   ]
   constructor(private httpService: HttpService) { }
@@ -23,22 +23,23 @@ export class AppService {
   getArticles(keyword: string): Promise<IArticles[]> {
     const newsFetchPromise = new Promise<IArticles[]>((resolve, reject) => {
       const allArticles: IArticles[] = [];
-      forkJoin(this.newsSource.map(item => this.httpService.get(item.url)))
-        .subscribe(results => {
-
-          results.map(result => {
-            const formatedData = this.getDataFromRawHtml(result.data, keyword);
-            this.logger.log(`formatted data ${JSON.stringify(formatedData)}`);
-            return allArticles.push(...formatedData);
+      let sourceCounter = 0;
+      this.newsSources.map(source => {
+        this.httpService.get(source.url)
+          .subscribe(result => {
+            const formatedData = this.getDataFromRawHtml(result.data, keyword, source.source);
+            allArticles.push(...formatedData);
+            sourceCounter++;
+            if (sourceCounter === this.newsSources.length) {
+              resolve(allArticles)
+            }
           });
-          resolve(allArticles);
-        });
+      });
     });
     return newsFetchPromise;
-
   }
 
-  getDataFromRawHtml(rawHtml: any, keyword: string): IArticles[] {
+  getDataFromRawHtml(rawHtml: any, keyword: string, source: string): IArticles[] {
     const articles: Array<IArticles> = []
     const $ = load(rawHtml, { lowerCaseTags: true, lowerCaseAttributeNames: true });
     $('a:contains("' + keyword + '")', rawHtml)
@@ -47,10 +48,9 @@ export class AppService {
         const title = $(this).text();
         const url = $(this).attr('href');
         if (articles.findIndex((item) => item.url === url) === -1) {
-          articles.push({ title, url });
+          articles.push({ title, url, source });
         }
       });
-    this.logger.log(`articales ${articles}`);
     return articles;
 
   }
