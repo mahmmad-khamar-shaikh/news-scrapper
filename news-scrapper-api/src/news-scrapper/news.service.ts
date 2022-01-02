@@ -2,25 +2,16 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { load } from 'cheerio';
 import { forkJoin, map } from 'rxjs';
-import { IArticles, INewsSource, IScrapPayload } from './app.interface';
+import { IArticles, INewsSource, IScrapPayload } from './news.interface';
 
 
 
 @Injectable()
-export class AppService {
-  private logger = new Logger();
-  private newsSources: Array<INewsSource> = [{
-    source: 'The Guardian',
-    url: 'https://www.theguardian.com/uk/technology'
-  },
-  {
-    source: 'Reuters',
-    url: 'https://www.reuters.com/technology'
-  }
-  ]
-  constructor(private httpService: HttpService) { }
+export class NewsService {
 
-  getArticles(payload: IScrapPayload): Promise<IArticles[]> {
+  constructor(private httpService: HttpService) { }
+  
+  public getArticles(payload: IScrapPayload): Promise<IArticles[]> {
     const newsFetchPromise = new Promise<IArticles[]>((resolve, reject) => {
       const allArticles: IArticles[] = [];
       let sourceCounter = 0;
@@ -30,7 +21,7 @@ export class AppService {
             const formatedData = this.getDataFromRawHtml(result.data, payload.keyword, source.source);
             allArticles.push(...formatedData);
             sourceCounter++;
-            if (sourceCounter === this.newsSources.length) {
+            if (sourceCounter === payload.newsSources.length) {
               resolve(allArticles)
             }
           });
@@ -39,7 +30,7 @@ export class AppService {
     return newsFetchPromise;
   }
 
-  getDataFromRawHtml(rawHtml: any, keyword: string, source: string): IArticles[] {
+  private getDataFromRawHtml(rawHtml: any, keyword: string, source: string): IArticles[] {
     const articles: Array<IArticles> = []
     const $ = load(rawHtml, { lowerCaseTags: true, lowerCaseAttributeNames: true });
     $('a:contains("' + keyword + '")', rawHtml)
@@ -52,6 +43,5 @@ export class AppService {
         }
       });
     return articles;
-
   }
 }

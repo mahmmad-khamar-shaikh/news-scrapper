@@ -1,13 +1,12 @@
 import { Body, Controller, Get, Logger } from '@nestjs/common';
-import { IScrapPayload } from './app.interface';
-import { AppService } from './app.service';
+import { IScrapPayload } from './news.interface';
+import { NewsService } from './news.service';
 
 @Controller('news')
-export class AppController {
+export class NewsController {
   private logger = new Logger();
 
-  constructor(private readonly appService: AppService,
-  ) { }
+  constructor(private readonly appService: NewsService) { }
 
   @Get()
   async getHello(@Body() payload: IScrapPayload) {
