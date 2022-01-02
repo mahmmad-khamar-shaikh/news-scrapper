@@ -8,3 +8,7 @@ export interface INewsSource {
     url: string;
 
 }
+export interface IScrapPayload {
+    keyword: string;
+    newsSources: INewsSource[]
+}
