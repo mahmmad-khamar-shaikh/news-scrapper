@@ -17,4 +17,8 @@ export class NewsController {
       this.logger.log(`error ${err}`)
     });
   }
+  @Get('version')
+  version() {
+    return '1.0.0';
+  }
 }
