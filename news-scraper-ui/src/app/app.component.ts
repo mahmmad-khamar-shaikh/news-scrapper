@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppService } from './app.service';
 
@@ -21,6 +21,12 @@ export class AppComponent implements OnInit {
       console.log(`version ${data}`);
       this.version = data;
     })
+
+    this.appService.getNews().subscribe(data=>{
+      console.log(JSON.stringify(data));
+    })
+
+
 
   }
 

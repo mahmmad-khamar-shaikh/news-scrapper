@@ -1,4 +1,4 @@
-import { Body, Controller, Get, InternalServerErrorException, Logger } from '@nestjs/common';
+import { Body, Controller, Get, InternalServerErrorException, Logger, Post } from '@nestjs/common';
 import { IScrapPayload } from './news.interface';
 import { NewsService } from './news.service';
 
@@ -8,17 +8,18 @@ export class NewsController {
 
   constructor(private readonly appService: NewsService) { }
 
-  @Get()
+  @Post()
   getNews(@Body() payload: IScrapPayload) {
     return this.appService.getArticles(payload).then(selectedNews => {
       return selectedNews;
     }).catch(err => {
-      return new InternalServerErrorException(err, 'Error Fetching Data');
       this.logger.log(`error ${err}`)
+      return new InternalServerErrorException(err, 'Error Fetching Data');
+
     });
   }
   @Get('version')
   version() {
-    return  '1.0.1';
+    return '1.0.1';
   }
 }
