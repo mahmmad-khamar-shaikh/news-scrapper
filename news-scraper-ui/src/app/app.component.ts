@@ -1,5 +1,5 @@
 import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { AppService } from './app.service';
 
 @Component({
@@ -10,6 +10,7 @@ import { AppService } from './app.service';
 export class AppComponent implements OnInit {
   title = 'news-scraper-ui';
   public version: string | undefined;
+  public newsData$: Observable<any> | undefined;
 
   constructor(private appService: AppService) {
 
@@ -22,12 +23,7 @@ export class AppComponent implements OnInit {
       this.version = data;
     })
 
-    this.appService.getNews().subscribe(data=>{
-      console.log(JSON.stringify(data));
-    })
-
-
-
+    this.newsData$ = this.appService.getNews().pipe(map(item=>JSON.stringify(item)));
   }
 
 
