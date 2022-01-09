@@ -1,6 +1,19 @@
 <h1>
     {{title}} : {{version}}
 </h1>
-<p>
-    data :{{ newsData$ |async}}
-</p>
+<div *ngFor="let item of newsData$ |async ">
+    <mat-card>
+        <mat-card-title>
+            {{item.source}}
+        </mat-card-title>
+        <mat-card-content>
+            {{item.title}}
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-button>  <a [href]="item.url" >Go to Article</a></button>
+        </mat-card-actions>
+    </mat-card>
+
+
+</div>

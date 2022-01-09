@@ -17,7 +17,7 @@ export class AppService {
 
   getNews(): Observable<IArticles[]> {
     return this.httpClient.post<IArticles[]>(this.baseUrl + '/news', {
-      "keyword": "Tesla",
+      "keyword": "Amazon",
       "newsSources": [{
         "source": "The Guardian",
         "url": "https://www.theguardian.com/uk/technology"
