@@ -10,6 +10,7 @@ import { IArticles } from './news.interface';
 })
 export class AppComponent implements OnInit {
   title = 'news-scraper-ui';
+  textValue = 'Amazon';
   public version: string | undefined;
   public newsData$: Observable<IArticles[]> | undefined;
 
@@ -24,7 +25,7 @@ export class AppComponent implements OnInit {
       this.version = data;
     })
 
-    this.newsData$ = this.appService.getNews();
+    this.newsData$ = this.appService.getNews(this.textValue);
   }
 
 

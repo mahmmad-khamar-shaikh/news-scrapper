@@ -18,7 +18,8 @@ export class NewsService {
         this.httpService.get(source.url)
           .subscribe({
             next: (result) => {
-              const formatedData = this.getDataFromRawHtml(result.data, payload.keyword, source.source);
+              const url = new URL(source.url);
+              const formatedData = this.getDataFromRawHtml(result.data, payload.keyword, source.source, url.host);
               allArticles.push(...formatedData);
               sourceCounter++;
               if (sourceCounter === payload.newsSources.length) {
@@ -34,18 +35,39 @@ export class NewsService {
     return newsFetchPromise;
   }
 
-  private getDataFromRawHtml(rawHtml: any, keyword: string, source: string): IArticles[] {
+  private getDataFromRawHtml(rawHtml: any, keyword: string, source: string, host: string): IArticles[] {
     const articles: Array<IArticles> = []
     const $ = load(rawHtml, { lowerCaseTags: true, lowerCaseAttributeNames: true });
     $('a:contains("' + keyword + '")', rawHtml)
       .each(function () {
 
         const title = $(this).text();
-        const url = $(this).attr('href');
+        let url = $(this).attr('href');
         if (articles.findIndex((item) => item.url === url) === -1) {
+          if (!isValidHttpUrl(url)) {
+            url = host + url;
+          }
           articles.push({ title, url, source });
         }
+        function isValidHttpUrl(string) {
+          let url;
+
+          try {
+            url = new URL(string);
+          } catch (_) {
+            return false;
+          }
+          console.log(`url ${url.host}`);
+
+          return url.protocol === 'http:' || url.protocol === 'https:';
+        }
+
       });
     return articles;
   }
+
+
+
+
+
 }

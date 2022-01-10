@@ -1,7 +1,13 @@
-<h1>
-    {{title}} : {{version}}
-</h1>
-<div *ngFor="let item of newsData$ |async ">
+<div style="float:right;width: 100%;">
+    <h5>
+        {{title}} : {{version}}
+    </h5>
+</div>
+<div>
+    <input matInput type="text" [(ngModel)]="textValue">
+</div>
+
+<div *ngFor="let item of newsData$ |async " style="margin: 5px;">
     <mat-card>
         <mat-card-title>
             {{item.source}}
@@ -10,8 +16,8 @@
             {{item.title}}
         </mat-card-content>
 
-        <mat-card-actions align="end">
-            <button mat-button>  <a [href]="item.url" >Go to Article</a></button>
+        <mat-card-actions align="start">
+            <button mat-button>  <a [href]="item.url" target="blank" >Article</a></button>
         </mat-card-actions>
     </mat-card>
 

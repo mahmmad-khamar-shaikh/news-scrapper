@@ -7,7 +7,8 @@ import { AppComponent } from './app.component';
 import { AppService } from './app.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatCardModule} from '@angular/material/card';
-
+import {MatInputModule} from '@angular/material/input'
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,9 @@ import {MatCardModule} from '@angular/material/card';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatCardModule
+    MatCardModule,
+    MatInputModule,
+    FormsModule
   ],
   providers: [AppService],
   bootstrap: [AppComponent]
